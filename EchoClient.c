@@ -40,7 +40,7 @@ int main()
 	{
 		fgets(sendbuffer,sizeof(sendbuffer),stdin);	
 		write(c_socket,sendbuffer,sizeof(sendbuffer));
-		if(strncasecmp(rcvbuffer,"quit",4)==0)
+		if(strncasecmp(sendbuffer,"quit",4)==0)
 				break;
 		n = read(c_socket,rcvBuffer,sizeof(rcvBuffer)); 
 		//서버에서 보내준 메세지를 rcvBuffer에 저장하고 메세지 길이를 n에 저장
