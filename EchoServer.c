@@ -54,6 +54,8 @@ int main()
 		{
 			n = read(c_socket,rcvbuffer,sizeof(rcvbuffer));
 			printf("rcvBuffer : %s",rcvbuffer);
+			if(strncasecmp(rcvbuffer,"quit",4)==0)
+				break;
 			write(c_socket, rcvbuffer, n); // 클라이언트에게 buffer의 내용을 전송함
 
 		}
