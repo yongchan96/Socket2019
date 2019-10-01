@@ -54,7 +54,7 @@ int main()
 		printf("%s\n",rcvbuffer);
 		
 		n = strlen(buffer);
-		write(c_socket, buffer, n); // 클라이언트에게 buffer의 내용을 전송함
+		write(c_socket, rcvbuffer, n); // 클라이언트에게 buffer의 내용을 전송함
 
 		close(c_socket);
 	}
