@@ -11,7 +11,7 @@ int main()
 {
 	int n;
 	int c_socket;
-	char sendbuffer[100];
+	char sendbuffer[BUFSIZE];
 	struct sockaddr_in c_addr;
 	
 	char rcvBuffer[BUFSIZE];// 서버에서 보내준 메시지를 저장하는 변수
@@ -39,7 +39,7 @@ int main()
 	while(1)
 	{
 		fgets(sendbuffer,sizeof(sendbuffer),stdin);	
-		write(c_socket,sendbuffer,sizeof(sendbuffer));
+		write(c_socket,sendbuffer, strlen(sendbuffer));
 		if(strncasecmp(sendbuffer,"quit",4)==0 || strncasecmp(rcvBuffer,"quit",4)==0 )
 				break;
 		n = read(c_socket,rcvBuffer,sizeof(rcvBuffer)); 
@@ -51,8 +51,10 @@ int main()
 			printf("Read Failed\n");
 			return -1;
 		}
+		rcvBuffer[n] = '\0';
 		printf("received data : %s\n" , rcvBuffer);
 		printf("rcvBuffer length : %d\n",n);
+		rcvBuffer[0] = '\0';
 	}
 		close(c_socket);
 	return 0;

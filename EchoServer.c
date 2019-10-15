@@ -54,8 +54,9 @@ int main()
 
 		while(1)
 		{
-			n = read(c_socket,rcvbuffer,sizeof(rcvbuffer));
-			printf("rcvBuffer : %s",rcvbuffer);
+			n = read(c_socket, rcvbuffer, sizeof(rcvbuffer));
+			rcvbuffer[n - 1] = '\0'; //개행 문자 삭제
+
 			if(strncasecmp(rcvbuffer,"quit",4)==0 || strncasecmp(rcvbuffer,"killserver",11)==0)
 				break;
 			else if(!strncasecmp(rcvbuffer,"안녕하세요",strlen("안녕하세요")))
@@ -64,9 +65,50 @@ int main()
 				strcpy(buffer,"내 이름은 김용찬이야.");
 			else if(!strncasecmp(rcvbuffer,"몇 살이야?",strlen("몇 살이야?")))
 				strcpy(buffer,"나는 24살이야");
+			else if(!strncasecmp(rcvbuffer,"strlen ",strlen("strlen ")))
+				//문자열의 길이는 XX입니다.
+				sprintf(buffer,"문자열의 길이는 %d 입니다.",strlen(rcvbuffer)-7);
+			else if(!strncasecmp(rcvbuffer,"strcmp ",strlen("strcmp ")))
+			{
+				char *token;
+				char *str[3];
+				int idx = 0;
+				token = strtok(rcvbuffer, " ");	
+				while(token != NULL)
+				{
+					str[idx] = token;
+					printf("str[%d] = %s\n",idx,str[idx]);
+					idx++;
+					token = strtok(NULL, " ");
+				}
+				if(idx < 3)
+					strcpy(buffer,"문자열 비교를 위해서는 두 문자열이 필요합니다.");
+				else if(!strcmp(str[1],str[2]))
+					sprintf(buffer,"%s와 %s는 같은 문자열입니다.",str[1],str[2]);
+				else
+					sprintf(buffer,"%s와 %s는 다른 문자열입니다.",str[1],str[2]);
+				
+			}
+			else if(!strncasecmp(rcvbuffer,"readfile ",strlen("readfile ")))
+			{
+				char *token;
+				char *filename;
+				char buff[255];
+				FILE *fp;
+				token = strtok(rcvbuffer," ");
+				filename=strtok(NULL,"\n ");
+				fp = fopen(filename,"r");
+				while(fgets(buff,255,(FILE *)fp))
+				{
+					strcpy(buffer,buff);
+					printf("%s\n",buffer);
+					write(c_socket,buffer,strlen(buffer));
+				}
+				fclose(fp);
+			}
 			else
 				strcpy(buffer,"무슨 말인지 모르겠습니다.");
-			
+	
 			write(c_socket,buffer,strlen(buffer));
 			
 
