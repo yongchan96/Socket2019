@@ -93,18 +93,32 @@ int main()
 			{
 				char *token;
 				char *filename;
-				char buff[255];
 				FILE *fp;
 				token = strtok(rcvbuffer," ");
 				filename=strtok(NULL,"\n ");
 				fp = fopen(filename,"r");
-				while(fgets(buff,255,(FILE *)fp))
+				while(fgets(buffer,255,(FILE *)fp))
 				{
-					strcpy(buffer,buff);
 					printf("%s\n",buffer);
 					write(c_socket,buffer,strlen(buffer));
 				}
 				fclose(fp);
+			}
+			else if(!strncasecmp(rcvbuffer,"exec ",strlen("exec ")))
+			{
+				char *token;
+				int command;
+				strtok(rcvbuffer," ");
+				token = strtok(NULL,"\0");
+				command = system(token);
+				if(command == 0)
+				{
+					sprintf(buffer,"[%s] command is executed",token);	 
+				}
+				else
+				{
+					sprintf(buffer,"[%s] command is failed",token);		
+				}
 			}
 			else
 				strcpy(buffer,"무슨 말인지 모르겠습니다.");
