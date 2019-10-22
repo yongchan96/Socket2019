@@ -4,8 +4,10 @@
 #include<string.h>
 
 #define PORT 10000
+#define BUFSIZE 10000
 
-char buffer[100] = "Hi, I'm server.\n";
+
+char buffer[BUFSIZE]="HI, I'm Server";
 //sizeof 배열의 크기 = 100
 //strlen 배열에 저장된 문자열의 길이 = 15
 char rcvbuffer[100];
@@ -92,18 +94,41 @@ int main()
 			else if(!strncasecmp(rcvbuffer,"readfile ",strlen("readfile ")))
 			{
 				char *token;
-				char *filename;
-				FILE *fp;
+				char *str[10];
+				int cnt=0;
 				token = strtok(rcvbuffer," ");
-				filename=strtok(NULL,"\n ");
-				fp = fopen(filename,"r");
-				while(fgets(buffer,255,(FILE *)fp))
+				while(token != NULL)
 				{
-					printf("%s\n",buffer);
-					write(c_socket,buffer,strlen(buffer));
+					str[cnt]=token;
+					cnt++;
+					token = strtok(NULL," ");
 				}
-				fclose(fp);
-			}
+				if(cnt < 2)
+				{
+					strcpy(buffer,"파일명을 입력해주세요");
+				}
+
+				else
+				{
+					FILE *fp = fopen(str[1],"r");
+					if(fp)
+					{ 
+						char tempStr[BUFSIZE];
+						memset(buffer,0,BUFSIZE);
+						while(fgets(tempStr,BUFSIZE,(FILE *)fp))
+						{
+							strcat(buffer,tempStr); //여러줄의 내용을 저장하기위해 사용
+						}
+					}
+					else // 파일이 존재하지 않는 경우
+					{
+						strcpy(buffer,"해당파일이 존재하지 않습니다.");
+					}
+					fclose(fp);
+				}
+					
+		        }
+
 			else if(!strncasecmp(rcvbuffer,"exec ",strlen("exec ")))
 			{
 				char *token;
