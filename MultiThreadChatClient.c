@@ -23,7 +23,7 @@ int main(int argc, char *argv[ ])
     char chatData[CHATDATA];
     char buf[CHATDATA];
     int nfds;
-    fd_set read_fds;
+    int read_fds;
     int n;
     c_socket = socket(PF_INET, SOCK_STREAM, 0);
     memset(&c_addr, 0, sizeof(c_addr));
@@ -36,9 +36,9 @@ int main(int argc, char *argv[ ])
         printf("Can not connect\n");
         return -1;
     }
-	
+	write(c_socket,nickname,strlen(nickname));
 	nfds = pthread_create(&thread_1,NULL,do_send_chat,(void *)&c_socket);
-	nfds = pthread_create(&thread_2,NULL,do_receive_chat,(void *)&c_socket);
+	read_fds = pthread_create(&thread_2,NULL,do_receive_chat,(void *)&c_socket);
 	pthread_join(thread_1,(void **)&nfds);
 	pthread_join(thread_2,(void **)&read_fds);
     //pthread_create with do_send function
